@@ -1,1 +1,1 @@
-# House price pridection
+# House price pridection using linear regression 
