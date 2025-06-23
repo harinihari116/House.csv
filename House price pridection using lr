@@ -1,0 +1,50 @@
+# Import necessary libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Load the dataset
+df = pd.read_csv('/content/Housing.csv')
+
+# Drop any rows with missing values
+df.dropna(inplace=True)
+
+# Encode categorical variables (very important step!)
+categorical_cols = ['mainroad', 'guestroom', 'basement', 'hotwaterheating',
+                    'airconditioning', 'prefarea', 'furnishingstatus']
+df = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
+
+# Define features (X) and target (y)
+X = df.drop('price', axis=1)  # features
+y = df['price']  # target variable
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a Linear Regression model
+model = LinearRegression()
+
+# Train the model on the training data
+model.fit(X_train, y_train)
+
+# Make predictions on the testing data
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f'Mean Squared Error: {mse:.2f}')
+print(f'R-Squared: {r2:.2f}')
+
+# Plot the predicted values against the actual values
+plt.figure(figsize=(10,8))
+plt.scatter(y_test, y_pred, color='pink')
+plt.plot([y.min(), y.max()], [y.min(), y.max()], lw=2)
+plt.xlabel('Actual Price')
+plt.ylabel('Predicted Price')
+plt.title('Actual vs Predicted Prices')
+plt.grid(True)
+plt.show()
